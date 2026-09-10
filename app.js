@@ -1,4 +1,4 @@
-const VERSION='v1.1.1',MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const VERSION='v1.1.2',MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const ART=[
  {url:'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Morris_Strawberry_Thief_1883.jpg/1280px-Morris_Strawberry_Thief_1883.jpg',title:'Strawberry Thief',artist:'William Morris',date:'1883'},
  {url:'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/1280px-Tsunami_by_hokusai_19th_century.jpg',title:'The Great Wave',artist:'Katsushika Hokusai',date:'c. 1831'},
