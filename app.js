@@ -1,11 +1,6 @@
-const VERSION='v0.1.0';
+const VERSION='v0.2.0';
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const ART=[
-  ['IMG_4119.jpeg','IMG_4119.webp','蝶影 · 墨蓝'],['IMG_4118.jpeg','IMG_4118.webp','水色圆舞'],['IMG_4120.jpeg','IMG_4120.webp','春日花谱'],
-  ['IMG_4121.jpeg','IMG_4121.webp','细线森林'],['IMG_4121.jpeg','IMG_4121.webp','织物寓言'],['IMG_4122.jpeg','IMG_4122.webp','夜蝶'],
-  ['IMG_4120.jpeg','IMG_4120.webp','盛夏小花'],['IMG_4123.jpeg','IMG_4123.webp','旋涡花园'],['IMG_4118.jpeg','IMG_4118.webp','九月水纹'],
-  ['IMG_4125.jpeg','IMG_4125.webp','黑叶集'],['IMG_4126.jpeg','IMG_4126.webp','群蝶标本'],['IMG_4127.jpeg','IMG_4127.webp','冬夜双蝶']
-];
+const ART_THEMES=['Japanese textile pattern','butterfly print','botanical drawing','spring flowers print','textile design','night landscape print','summer garden painting','abstract pattern','autumn botanical print','black and white print','butterfly illustration','winter landscape print'];
 const FESTIVALS={
   '01-01':'元旦','02-14':'情人节','03-08':'妇女节','03-12':'植树节','04-22':'世界地球日','05-01':'劳动节','05-04':'青年节','06-01':'儿童节','06-05':'世界环境日','07-01':'建党节','08-01':'建军节','09-10':'教师节','10-01':'国庆节','10-31':'万圣夜','12-24':'平安夜','12-25':'圣诞节'
 };
@@ -35,10 +30,30 @@ function lunarText(date){try{const parts=new Intl.DateTimeFormat('zh-CN-u-ca-chi
 function festival(y,m,d){const md=`${pad(m)}-${pad(d)}`,full=`${y}-${md}`;if(WORLD_KEYS.has(md)&&!settings.world)return '';return FESTIVALS_2026[full]||FESTIVALS[md]||''}
 function dayStatus(y,m,d){const override=notes[keyFor(y,m,d)]?.status;if(override&&override!=='unset')return override;const row=ownerRow(y,m);if(!row)return 'unset';return row.rest.includes(d)?'rest':'work'}
 
+async function renderArt(y,m){
+  const card=$('.art-card'),img=$('#monthArt'),title=$('#artTitle'),note=$('#artNote'),cacheKey=`slm-art-${y}-${m}`;
+  card.classList.add('loading');img.removeAttribute('src');title.textContent='本月艺术作品';note.textContent='正在策展…';
+  try{
+    let work=JSON.parse(localStorage.getItem(cacheKey)||'null');
+    if(!work){
+      const fields='id,title,artist_title,date_display,image_id,is_public_domain';
+      const url=`https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(ART_THEMES[m-1])}&query[term][is_public_domain]=true&limit=40&fields=${fields}`;
+      const response=await fetch(url);if(!response.ok)throw new Error('museum unavailable');
+      const payload=await response.json(),works=(payload.data||[]).filter(item=>item.image_id&&item.is_public_domain===true);
+      if(!works.length)throw new Error('no artwork');
+      work=works[Math.abs(y*37+m*11)%works.length];work.iiif=payload.config?.iiif_url||'https://www.artic.edu/iiif/2';
+      localStorage.setItem(cacheKey,JSON.stringify(work));
+    }
+    img.onload=()=>card.classList.remove('loading');img.onerror=()=>{card.classList.add('loading');note.textContent='艺术馆图片暂时无法载入'};
+    img.src=`${work.iiif}/${work.image_id}/full/843,/0/default.jpg`;img.alt=`${work.artist_title||'佚名艺术家'}《${work.title}》`;
+    title.textContent=work.title;note.textContent=`${work.artist_title||'佚名艺术家'}${work.date_display?' · '+work.date_display:''} · AIC`;
+  }catch(error){title.textContent='本月艺术留白';note.textContent=`网络恢复后自动更新 · ${VERSION}`}
+}
+
 function render(){
   const y=cursor.getFullYear(),m=cursor.getMonth()+1,total=daysIn(y,m),first=(new Date(y,m-1,1).getDay()+6)%7,row=ownerRow(y,m);
   $('#monthEn').textContent=MONTHS[m-1];$('#monthNum').textContent=`/${pad(m)}`;$('#yearText').textContent=y;$('#teamMonth').textContent=`${y}.${pad(m)}`;
-  const art=ART[m-1];$('#monthArt').src=`assets/${art[1]}`;$('#artTitle').textContent=art[2];$('#artNote').textContent=`MONTH ${pad(m)} · ${VERSION}`;
+  renderArt(y,m);
   const rest=row?row.rest.length:0,work=row?total-rest:0,expected=weekendCount(y,m);
   $('#summaryStrip').innerHTML=summaryHTML([['上班',work],['休息',rest],['本月应休',expected]]);
   $('#recordSummary').innerHTML=summaryHTML([['已记录',Object.keys(notes).filter(k=>k.startsWith(`${y}-${pad(m)}`)).length],['排班天数',work],['与应休差',row?rest-expected:'—']]);

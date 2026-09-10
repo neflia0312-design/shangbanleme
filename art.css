@@ -1,0 +1,4 @@
+.art-card{background:linear-gradient(135deg,#9eaaa5,#657973 48%,#b8aaa0)}
+.art-card img{transition:opacity .35s}
+.art-card.loading img{opacity:0}
+.art-card.loading:before{content:"ART / COLLECTION";position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.72);font:600 .7rem ui-sans-serif,system-ui;letter-spacing:.24em}
