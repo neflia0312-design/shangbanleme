@@ -1,88 +1,29 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f4f1eb" />
-  <meta name="description" content="陈可的排班、考勤与节日日历" />
-  <title>上班了没</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="art.css" />
-</head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">WORKING CALENDAR</p>
-        <h1>上班了没</h1>
-      </div>
-      <button class="icon-button" id="todayBtn" aria-label="回到今天">今</button>
-    </header>
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffffff"><title>上班了没</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="art.css"><style>.dialog-close:focus-visible,.segmented input:focus-visible+span,.field input:focus-visible,.field textarea:focus-visible{box-shadow:none}</style></head><body>
+<main class="app">
+  <section class="view active" id="calendarView">
+    <figure class="artwork loading" id="artwork"><img id="monthArt" crossorigin="anonymous" alt="本月艺术作品"><div class="art-fallback">ART / COLLECTION</div><figcaption><span id="artTitle">本月作品</span><span id="artNote">正在载入…</span></figcaption></figure>
+    <header class="month-head"><button id="prevMonth" aria-label="上个月">←</button><div><span id="monthEn"></span><strong id="monthNum"></strong><small id="yearText"></small></div><button id="nextMonth" aria-label="下个月">→</button></header>
+    <div class="weekdays"><span>MON一</span><span>TUE二</span><span>WED三</span><span>THU四</span><span>FRI五</span><span>SAT六</span><span>SUN日</span></div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="month-stats" id="summaryStrip"></div>
+  </section>
 
-    <main>
-      <section class="view active" id="calendarView" aria-label="我的日历">
-        <div class="month-controls">
-          <button class="arrow" id="prevMonth" aria-label="上个月">←</button>
-          <div class="month-title"><span id="monthEn"></span><strong id="monthNum"></strong><small id="yearText"></small></div>
-          <button class="arrow" id="nextMonth" aria-label="下个月">→</button>
-        </div>
+  <section class="view" id="teamView">
+    <header class="month-head compact"><button id="teamPrev" aria-label="上个月">←</button><div><span>同事</span><strong id="teamMonth"></strong></div><button id="teamNext" aria-label="下个月">→</button></header>
+    <p class="team-hint">点一个日期，核对当天谁在岗</p>
+    <div class="weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+    <div class="calendar-grid team-calendar" id="teamCalendar"></div>
+    <section class="on-duty"><p id="dutyDate">选择日期</p><div id="dutyList"><span class="quiet">点击上方日期查看</span></div></section>
+  </section>
 
-        <figure class="art-card">
-          <img id="monthArt" alt="本月艺术插画" />
-          <figcaption><span id="artTitle"></span><span id="artNote"></span></figcaption>
-        </figure>
+  <section class="view" id="recordsView">
+    <header class="plain-head"><h2>记录与排班</h2><span>v0.3.1</span></header>
+    <div class="record-block"><h3>本月记录</h3><div class="record-summary" id="recordSummary"></div></div>
+    <div class="record-block"><h3>导入排班</h3><p>支持“上班了没”JSON 文件，导入前会核对月份、姓名与日期。</p><div class="actions"><label class="dark-btn">选择文件<input id="importFile" type="file" accept="application/json,.json" hidden></label><button id="exportBtn">导出备份</button></div><p id="importStatus"></p></div>
+    <div class="record-block"><h3>日历显示</h3><label><span>世界节日</span><input type="checkbox" id="worldToggle" checked></label><label><span>农历与节气</span><input type="checkbox" id="lunarToggle" checked></label></div>
+  </section>
+</main>
 
-        <div class="summary-strip" id="summaryStrip"></div>
-        <div class="legend"><span><i class="dot work"></i>上班</span><span><i class="dot rest"></i>休息</span><span><i class="dot event"></i>有记录</span></div>
+<nav class="bottom-nav"><button class="nav-item active" data-view="calendarView"><b>◷</b>我的日历</button><button class="nav-item" data-view="teamView"><b>↯</b>同事</button><button class="nav-item" data-view="recordsView"><b>＋</b>记录</button></nav>
 
-        <div class="weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-        <div class="calendar-grid" id="calendarGrid"></div>
-      </section>
-
-      <section class="view" id="teamView" aria-label="同事排班">
-        <div class="section-heading"><div><p class="eyebrow">TEAM ROSTER</p><h2>同事排班</h2></div><span id="teamMonth"></span></div>
-        <div class="team-filter" id="teamFilter"></div>
-        <div class="team-list" id="teamList"></div>
-      </section>
-
-      <section class="view" id="recordsView" aria-label="记录与导入">
-        <div class="section-heading"><div><p class="eyebrow">RECORDS & DATA</p><h2>记录与导入</h2></div></div>
-        <div class="panel">
-          <h3>本月考勤</h3>
-          <div class="record-summary" id="recordSummary"></div>
-        </div>
-        <div class="panel">
-          <h3>导入排班</h3>
-          <p class="muted">支持本 App 的 JSON 文件。导入前会校验月份、姓名与日期，不会静默覆盖。</p>
-          <div class="button-row"><label class="primary-button">选择文件<input id="importFile" type="file" accept="application/json,.json" hidden /></label><button id="exportBtn" class="secondary-button">导出备份</button></div>
-          <div id="importStatus" class="status-message" aria-live="polite"></div>
-        </div>
-        <div class="panel">
-          <h3>显示设置</h3>
-          <label class="switch-row"><span>世界节日</span><input type="checkbox" id="worldToggle" checked /></label>
-          <label class="switch-row"><span>农历与节气</span><input type="checkbox" id="lunarToggle" checked /></label>
-        </div>
-      </section>
-    </main>
-
-    <nav class="bottom-nav" aria-label="主导航">
-      <button class="nav-item active" data-view="calendarView"><span>◷</span>我的日历</button>
-      <button class="nav-item" data-view="teamView"><span>⌁</span>同事</button>
-      <button class="nav-item" data-view="recordsView"><span>＋</span>记录</button>
-    </nav>
-  </div>
-
-  <dialog id="dayDialog">
-    <form method="dialog" id="dayForm">
-      <div class="dialog-head"><div><p class="eyebrow" id="dialogDate"></p><h2 id="dialogTitle"></h2></div><button class="close-button" value="cancel" aria-label="关闭">×</button></div>
-      <fieldset><legend>当天状态</legend><div class="segmented"><label><input type="radio" name="status" value="work" /><span>上班</span></label><label><input type="radio" name="status" value="rest" /><span>休息</span></label><label><input type="radio" name="status" value="unset" /><span>未排</span></label></div></fieldset>
-      <label class="field">重要事项<input id="eventTitle" maxlength="30" placeholder="例：省级接待 / 请假" /></label>
-      <label class="field">考勤备注<textarea id="eventNote" rows="4" maxlength="200" placeholder="记录打卡、加班、调休或当天事项"></textarea></label>
-      <div class="dialog-actions"><button type="button" class="danger-button" id="deleteRecord">删除记录</button><button value="save" class="primary-button" id="saveDay">保存</button></div>
-    </form>
-  </dialog>
-  <div class="toast" id="toast" role="status"></div>
-  <script src="app.js"></script>
-</body>
-</html>
+<dialog id="dayDialog"><form method="dialog" id="dayForm"><header><div><small id="dialogDate"></small><h2 id="dialogTitle"></h2></div><button value="cancel" class="dialog-close" aria-label="关闭">×</button></header><fieldset><legend>当天状态</legend><div class="segmented"><label><input type="radio" name="status" value="work"><span>上班</span></label><label><input type="radio" name="status" value="rest"><span>休息</span></label><label><input type="radio" name="status" value="unset"><span>未排</span></label></div></fieldset><label class="field">重要事项<input id="eventTitle" maxlength="30" placeholder="例：省级接待 / 请假"></label><label class="field">考勤备注<textarea id="eventNote" rows="3" maxlength="200" placeholder="记录打卡、加班、调休或当天事项"></textarea></label><footer><button type="button" id="deleteRecord">删除记录</button><button id="saveDay" class="dark-btn">保存</button></footer></form></dialog><div class="toast" id="toast"></div><script src="app.js"></script><script src="updater.js"></script></body></html>
