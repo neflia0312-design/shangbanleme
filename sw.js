@@ -1,6 +1,6 @@
-const CACHE='shangbanleme-v1.4.0';
-const ASSETS=['./','./index.html','./art.css?v=1.4.0','./app.js?v=1.4.0','./updater.js?v=1.4.0','./september-2026.json'];
+const CACHE='shangbanleme-v1.5.0',ART_CACHE='shangbanleme-art-v1';
+const ASSETS=['./','./index.html','./art.css?v=1.5.0','./app.js?v=1.5.0','./updater.js?v=1.5.0','./september-2026.json'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE&&key!==ART_CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('message',event=>{if(event.data==='SKIP_WAITING')self.skipWaiting()});
-self.addEventListener('fetch',event=>{if(event.request.mode==='navigate'){event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put('./',copy));return response}).catch(()=>caches.match('./')));return}event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request)))});
+self.addEventListener('fetch',event=>{if(event.request.mode==='navigate'){event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put('./',copy));return response}).catch(()=>caches.match('./')));return}if(event.request.destination==='image'){event.respondWith(caches.open(ART_CACHE).then(async cache=>{const cached=await cache.match(event.request);if(cached)return cached;const response=await fetch(event.request);if(response.ok)cache.put(event.request,response.clone());return response}));return}event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request)))});
