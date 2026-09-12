@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#ffffff"><title>上班了没</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="art.css?v=1.6.0"></head><body>
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#ffffff"><title>上班了没</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="art.css?v=1.7.0"></head><body>
 <main class="app">
   <section class="view active" id="calendarView">
     <figure class="artwork loading" id="artwork" role="button" tabindex="0" aria-label="单击查看作品介绍，双击更换作品"><img id="monthArt" crossorigin="anonymous" alt="本月艺术作品"><div class="art-fallback" aria-hidden="true"></div><figcaption><span id="artTitle"></span><span id="artNote"></span></figcaption></figure>
@@ -13,11 +13,11 @@
     <p class="team-hint">点一个日期，核对当天谁在岗</p>
     <div class="weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
     <div class="calendar-grid team-calendar" id="teamCalendar"></div>
-    <section class="on-duty"><p id="dutyDate">选择日期</p><div id="dutyList"><span class="quiet">点击上方日期查看</span></div></section>
+    <section class="on-duty"><div class="duty-head"><p id="dutyDate">选择日期</p><button id="manageRoster">管理排班</button></div><div id="dutyList"><span class="quiet">点击上方日期查看</span></div></section>
   </section>
 
   <section class="view" id="recordsView">
-    <header class="plain-head"><h2>记录与排班</h2><span>v1.6</span></header>
+    <header class="plain-head"><h2>记录与排班</h2><span>v1.7</span></header>
     <div class="record-block"><h3>本月记录</h3><div class="record-summary" id="recordSummary"></div></div>
     <div class="record-block"><h3>导入排班</h3><p>支持“上班了没”JSON 文件，导入前会核对月份、姓名与日期。</p><div class="actions"><label class="dark-btn">选择文件<input id="importFile" type="file" accept="application/json,.json" hidden></label><button id="exportBtn">导出备份</button></div><p id="importStatus"></p></div>
     <div class="record-block"><h3>日历显示</h3><label><span>世界节日</span><input type="checkbox" id="worldToggle" checked></label><label><span>农历与节气</span><input type="checkbox" id="lunarToggle" checked></label></div>
@@ -28,4 +28,5 @@
 
 <dialog id="dayDialog"><form method="dialog" id="dayForm"><header><div><small id="dialogDate"></small><h2 id="dialogTitle"></h2></div><button value="cancel" class="dialog-close" aria-label="关闭">×</button></header><fieldset><legend>当天状态</legend><div class="segmented"><label><input type="radio" name="status" value="work"><span>上班</span></label><label><input type="radio" name="status" value="rest"><span>休息</span></label><label><input type="radio" name="status" value="unset"><span>未排</span></label></div></fieldset><label class="field">重要事项<input id="eventTitle" maxlength="30" placeholder="例：省级接待 / 请假"></label><label class="field">考勤备注<textarea id="eventNote" rows="3" maxlength="200" placeholder="记录打卡、加班、调休或当天事项"></textarea></label><footer><button type="button" id="deleteRecord">删除记录</button><button id="saveDay" class="dark-btn">保存</button></footer></form></dialog>
 <dialog id="artDialog" class="art-dialog"><article><button class="dialog-close art-close" aria-label="关闭">×</button><small>ARTWORK OF THE MONTH · 本月艺术作品</small><h2 id="artDetailTitle" lang="en"></h2><p class="art-title-zh" id="artDetailZhTitle"></p><p class="art-byline" id="artDetailByline"></p><div class="art-copy"><p id="artDetailTextZh"></p><p id="artDetailTextEn" lang="en"></p></div><div class="art-links"><a id="artArtistLink" target="_blank" rel="noopener">艺术家中英文资料</a><a id="artSourceLink" target="_blank" rel="noopener">馆藏原图与版权信息</a></div></article></dialog>
-<div class="toast" id="toast"></div><script src="app.js?v=1.6.0"></script><script src="updater.js?v=1.6.0"></script></body></html>
+<dialog id="rosterDialog" class="roster-dialog"><form method="dialog" id="rosterForm"><header><div><small id="rosterMonthLabel"></small><h2>排班管理</h2></div><button value="cancel" class="dialog-close" aria-label="关闭">×</button></header><div class="roster-tabs" role="tablist"><button type="button" class="active" data-roster-mode="day">当日值班</button><button type="button" data-roster-mode="month">整月排班</button></div><p class="roster-tip" id="rosterTip"></p><div id="rosterEditor"></div><footer><button type="button" id="addPerson">＋ 添加人员</button><button type="submit" class="dark-btn" id="saveRoster">保存</button></footer></form></dialog>
+<div class="toast" id="toast"></div><script src="app.js?v=1.7.0"></script><script src="updater.js?v=1.7.0"></script></body></html>

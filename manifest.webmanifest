@@ -1,1 +1,11 @@
-{"name":"上班了没","short_name":"上班了没","start_url":"./","display":"standalone","background_color":"#f4f1eb","theme_color":"#f4f1eb","description":"排班、考勤与节日日历"}
+{
+  "name": "上班了没",
+  "short_name": "上班了没",
+  "description": "艺术月历与团队排班",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "zh-CN"
+}
